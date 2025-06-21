@@ -1,7 +1,12 @@
+import CustomerDashboard from "@/components/custom/dashboard/CustomerDashboard";
+import SellerDashboard from "@/components/custom/dashboard/SellerDashboard";
+
 export default function Home() {
+  const userRole = "seller";
+
   return (
     <div>
-      <h1 className="text-2xl">Home</h1>
+      {userRole === "seller" ? <SellerDashboard /> : <CustomerDashboard />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export default function About() {
+export default function Products() {
   return (
     <div>
       about page
