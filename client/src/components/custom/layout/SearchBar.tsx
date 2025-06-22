@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 const categories = [
@@ -15,6 +16,8 @@ const categories = [
 export default function SearchBar() {
   const [selectedCategory, setSelectedCategory] = useState("Categories");
   const [isOpen, setIsOpen] = useState(false);
+
+  let userRole = "seller";
 
   return (
     <div className="flex items-center gap-2 w-full my-5">
@@ -60,17 +63,21 @@ export default function SearchBar() {
       </button>
 
       {/* for customer only */}
-      <div className="flex items-center gap-4 ml-4 text-gray-600">
-        <div className="flex items-center gap-1 cursor-pointer">
-          <ShoppingCart className="w-6 h-6 " />
-          <p>Cart</p>
-        </div>
+      {userRole === "customer" && (
+        <div className="flex items-center gap-4 ml-4 text-gray-600">
+          <Link href={`/wishlist`}>
+            <div className="flex items-center gap-1 text-gray-600 cursor-pointer">
+              <Heart className="w-6 h-6 " />
+              <p>Wishlist</p>
+            </div>
+          </Link>
 
-        <div className="flex items-center gap-1 text-gray-600 cursor-pointer">
-          <Heart className="w-6 h-6 " />
-          <p>Wishlist</p>
+          <div className="flex items-center gap-1 cursor-pointer">
+            <ShoppingCart className="w-6 h-6 " />
+            <p>Cart</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
