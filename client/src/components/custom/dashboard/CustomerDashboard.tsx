@@ -103,7 +103,7 @@ export default function CustomerDashboard() {
       {/* recent activities */}
       <div className="bg-white rounded-xl border py-6 px-3 shadow-sm mt-10">
         <h1 className="font-semibold text-lg mb-4">Recent Activity</h1>
-        <ul className="divide-y">
+        <ul>
           {activities.map((activity, idx) => (
             <li key={idx} className="flex items-start justify-between py-4">
               <div className="flex items-start gap-3">

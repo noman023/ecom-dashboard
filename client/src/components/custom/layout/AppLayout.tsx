@@ -1,0 +1,31 @@
+"use client";
+import { Navbar } from "@/components/custom/layout/Navbar";
+import { SidebarComponent } from "@/components/custom/layout/Sidebar";
+import SearchBar from "@/components/custom/layout/SearchBar";
+import { usePathname } from "next/navigation";
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+
+  if (isAuthPage) {
+    return (
+      <main className="flex-1 overflow-auto p-4 bg-gray-50 min-h-screen flex items-center justify-center">
+        {children}
+      </main>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col px-1">
+      <Navbar />
+      <SearchBar />
+
+      <div className="flex flex-1 border-t">
+        <SidebarComponent />
+
+        <main className="flex-1 overflow-auto p-4 bg-gray-50">{children}</main>
+      </div>
+    </div>
+  );
+}
