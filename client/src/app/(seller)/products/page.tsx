@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
+import DataTable from "@/components/custom/global/DataTable";
 
 export default function Products() {
   return (
     <div>
-      about page
-      <Button>shadcn</Button>
+      products page
+      <DataTable data={[]} columns={[]} />
     </div>
   );
 }
