@@ -49,9 +49,12 @@ const DataTable = ({ data, columns }: { data: any; columns: any }) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-[#f6f6f6]">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-gray-700">
+                  <TableHead
+                    key={header.id}
+                    className="text-gray-500 font-bold"
+                  >
                     {header.isPlaceholder ? null : (
                       <div
                         {...{
