@@ -6,11 +6,19 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Select } from "@/components/ui/select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type RegisterForm = {
   name: string;
   email: string;
   password: string;
+  role: "seller" | "customer";
 };
 
 export default function Register() {
@@ -19,7 +27,7 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
+    setValue,
   } = useForm<RegisterForm>();
 
   const onSubmit = (data: RegisterForm) => {
@@ -73,6 +81,30 @@ export default function Register() {
                 </span>
               )}
             </div>
+
+            <div>
+              <Label htmlFor="role">Your Role</Label>
+              <Select
+                onValueChange={(value) =>
+                  setValue("role", value as "seller" | "customer")
+                }
+                defaultValue=""
+              >
+                <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="seller">Seller</SelectItem>
+                  <SelectItem value="customer">Customer</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.role && (
+                <span className="text-xs text-red-500">
+                  {errors.role.message as string}
+                </span>
+              )}
+            </div>
+
             <div className="relative">
               <Label htmlFor="password">Password</Label>
               <Input
