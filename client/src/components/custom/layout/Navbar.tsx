@@ -42,13 +42,13 @@ export function Navbar() {
 
       <div className="flex items-center">
         <div className="relative flex items-center">
-          <Globe className="w-5 h-5 mr-1" />
+          <Globe className="w-5 h-5" />
           <button
             onClick={() => setIsOpen((v) => !v)}
             className="flex items-center px-2 py-1 text-sm"
           >
             {lang}
-            <ChevronDown className="w-4 h-4 ml-1" />
+            <ChevronDown className="w-4 h-4" />
           </button>
           {isOpen && (
             <div className="absolute left-0 top-full mt-1 w-16 bg-white border rounded shadow z-10">

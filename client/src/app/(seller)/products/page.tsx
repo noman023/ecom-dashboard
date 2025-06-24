@@ -52,6 +52,23 @@ export default function Products() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
+  // Example filter logic
+  const filteredData = allData.filter((item) => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.sku.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStock =
+      stockStatus === "" ||
+      (stockStatus === "active" && item.status === "Active") ||
+      (stockStatus === "low" && item.status === "Low Stock") ||
+      (stockStatus === "out" && item.status === "Out of Stock");
+
+    const matchesCategory = category === "" || item.category === category;
+    // Add category filter logic if you have categories
+    return matchesSearch && matchesStock && matchesCategory;
+  });
+
   const columns = [
     columnHelper.accessor("image", {
       header: "Image",
@@ -105,23 +122,6 @@ export default function Products() {
     }),
   ];
 
-  // Example filter logic
-  const filteredData = allData.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.sku.toLowerCase().includes(search.toLowerCase());
-
-    const matchesStock =
-      stockStatus === "" ||
-      (stockStatus === "active" && item.status === "Active") ||
-      (stockStatus === "low" && item.status === "Low Stock") ||
-      (stockStatus === "out" && item.status === "Out of Stock");
-
-    const matchesCategory = category === "" || item.category === category;
-    // Add category filter logic if you have categories
-    return matchesSearch && matchesStock && matchesCategory;
-  });
-
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -133,7 +133,7 @@ export default function Products() {
       </div>
 
       {/* Custom search and filter controls */}
-      <div className="flex items-center justify-between gap-4 my-6">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 my-6">
         <Input
           placeholder="Search by name or SKU"
           value={search}
