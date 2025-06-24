@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -58,9 +60,7 @@ export default function SearchBar() {
         />
       </div>
 
-      <button className="px-6 py-2 bg-red-600 text-white rounded-sm hover:bg-red-600">
-        Search
-      </button>
+      <Button className={commonButtonStyle}>Search</Button>
 
       {/* for customer only */}
       {userRole === "customer" && (
