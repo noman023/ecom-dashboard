@@ -21,11 +21,13 @@ import {
 } from "@/components/ui/dialog";
 import { createColumnHelper } from "@tanstack/react-table";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
+import Link from "next/link";
 
 const columnHelper = createColumnHelper<any>();
 
 const allData = [
   {
+    id: 1,
     image: null,
     name: "Premium Cotton T-Shirt",
     sku: "TS-001",
@@ -35,6 +37,7 @@ const allData = [
     category: "apparel",
   },
   {
+    id: 2,
     image: null,
     name: "Leather Wallet",
     sku: "WL-002",
@@ -103,9 +106,16 @@ export default function Products() {
       header: "Actions",
       cell: (info) => (
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="px-2 py-1 h-8">
-            <Edit className="w-4 h-4 mr-1" /> Edit
-          </Button>
+          <Link href={`/products/edit/${info.row.original.id}`}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="px-2 py-1 h-8 cursor-pointer"
+            >
+              <Edit className="w-4 h-4 mr-1" /> Edit
+            </Button>
+          </Link>
+
           <Button
             size="sm"
             variant="outline"
@@ -126,10 +136,13 @@ export default function Products() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Button className={commonButtonStyle}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
-        </Button>
+
+        <Link href="/products/add">
+          <Button className={`${commonButtonStyle} cursor-pointer`}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Product
+          </Button>
+        </Link>
       </div>
 
       {/* Custom search and filter controls */}
