@@ -47,7 +47,7 @@ const customerNavItems: NavItem[] = [
   { title: "Overview", href: "/", icon: <HomeIcon className="w-5 h-5" /> },
   {
     title: "My Orders",
-    href: "/orders",
+    href: "/my-orders",
     icon: <Truck className="w-5 h-5" />,
   },
   {
@@ -75,7 +75,7 @@ const customerNavItems: NavItem[] = [
 export function SidebarComponent() {
   const pathname = usePathname();
 
-  const userRole = "seller";
+  let userRole = "sellerr";
 
   return (
     <div className="relative">
