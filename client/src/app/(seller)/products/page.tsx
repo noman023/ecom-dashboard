@@ -10,60 +10,19 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { AlertTriangle, Edit, Trash2, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { createColumnHelper } from "@tanstack/react-table";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 const columnHelper = createColumnHelper<any>();
-
-const columns = [
-  columnHelper.accessor("image", {
-    header: "Image",
-    cell: () => <div className="w-8 h-8 bg-gray-200 rounded" />,
-  }),
-  columnHelper.accessor("name", {
-    header: "Name",
-    cell: (info) => info.getValue() || "N/A",
-  }),
-  columnHelper.accessor("sku", {
-    header: "SKU",
-    cell: (info) => info.getValue() || "N/A",
-  }),
-  columnHelper.accessor("price", {
-    header: "Price",
-    cell: (info) => info.getValue() || "N/A",
-  }),
-  columnHelper.accessor("stock", {
-    header: "Stock",
-    cell: (info) => info.getValue() || "N/A",
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    cell: (info) => (
-      <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-medium">
-        {info.getValue()}
-      </span>
-    ),
-  }),
-  columnHelper.display({
-    id: "actions",
-    header: "Actions",
-    cell: () => (
-      <div className="flex gap-2">
-        <Button size="sm" variant="outline" className="px-2 py-1 h-8">
-          <Edit className="w-4 h-4 mr-1" /> Edit
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="px-2 py-1 h-8 border-red-200 text-red-500 hover:bg-red-50"
-        >
-          <Trash2 className="w-4 h-4 mr-1" /> Delete
-        </Button>
-      </div>
-    ),
-  }),
-];
 
 const allData = [
   {
@@ -90,6 +49,61 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [stockStatus, setStockStatus] = useState("");
   const [category, setCategory] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
+  const columns = [
+    columnHelper.accessor("image", {
+      header: "Image",
+      cell: () => <div className="w-8 h-8 bg-gray-200 rounded" />,
+    }),
+    columnHelper.accessor("name", {
+      header: "Name",
+      cell: (info) => info.getValue() || "N/A",
+    }),
+    columnHelper.accessor("sku", {
+      header: "SKU",
+      cell: (info) => info.getValue() || "N/A",
+    }),
+    columnHelper.accessor("price", {
+      header: "Price",
+      cell: (info) => info.getValue() || "N/A",
+    }),
+    columnHelper.accessor("stock", {
+      header: "Stock",
+      cell: (info) => info.getValue() || "N/A",
+    }),
+    columnHelper.accessor("status", {
+      header: "Status",
+      cell: (info) => (
+        <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-medium">
+          {info.getValue()}
+        </span>
+      ),
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: "Actions",
+      cell: (info) => (
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" className="px-2 py-1 h-8">
+            <Edit className="w-4 h-4 mr-1" /> Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="px-2 py-1 h-8 border-red-200 text-red-500 hover:bg-red-50"
+            onClick={() => {
+              setSelectedProduct(info.row.original);
+              setDeleteModalOpen(true);
+            }}
+          >
+            <Trash2 className="w-4 h-4 mr-1" /> Delete
+          </Button>
+        </div>
+      ),
+    }),
+  ];
 
   // Example filter logic
   const filteredData = allData.filter((item) => {
@@ -157,6 +171,38 @@ export default function Products() {
       </div>
 
       <DataTable data={filteredData} columns={columns} />
+
+      {/* Delete Modal */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader className="flex flex-col items-center">
+            <AlertTriangle className="w-10 h-10 text-red-500 mb-2" />
+            <DialogTitle className="text-center">Delete Product?</DialogTitle>
+            <DialogDescription className="text-center">
+              Are you sure you want to delete this product?
+              <br />
+              This action cannot be undone.
+            </DialogDescription>
+            <div className="font-semibold text-base mt-2">
+              {selectedProduct?.name}
+            </div>
+          </DialogHeader>
+          <DialogFooter className="flex justify-center gap-2 mt-4">
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                // handle actual delete here
+                setDeleteModalOpen(false);
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-1" /> Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
