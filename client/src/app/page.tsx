@@ -6,9 +6,8 @@ import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
 
 export default function Home() {
-  const auth = useContext(AuthContext);
-  console.log("Auth Context:", auth);
-  let userRole = "selletr";
+  const authState = useContext(AuthContext);
+  const { userRole } = authState?.user || {};
 
   return (
     <div>

@@ -3,26 +3,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
-import CustomButton from "@/components/custom/global/CustomButton";
+import { axiosInstance } from "@/hooks/useAxiosInstance";
+import { AuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 type LoginForm = {
   email: string;
   password: string;
 };
-
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const authState = useContext(AuthContext);
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>();
 
-  const onSubmit = (data: LoginForm) => {
-    console.log(data);
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      authState?.setUser(res.data.user);
+      toast.success("Login successful!");
+      router.push("/");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.error || "Login failed. Please try again."
+      );
+      console.error("Login failed:", err);
+    }
   };
 
   return (

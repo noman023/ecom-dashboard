@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Bell,
   ChevronDown,
@@ -16,12 +16,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthContext } from "@/context/AuthContext";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [lang, setLang] = useState("EN");
+
+  const { logout, user } = useContext(AuthContext)!;
 
   const languages = ["EN", "BN"];
 
@@ -105,7 +108,7 @@ export function Navbar() {
                   <AvatarFallback>AM</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium">Alex Morgan</p>
+                  <p className="text-sm font-medium">{user?.name}</p>
                 </div>
                 <ChevronDown className="ml-2 h-4 w-4 text-gray-dark" />
               </Button>
@@ -114,7 +117,9 @@ export function Navbar() {
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

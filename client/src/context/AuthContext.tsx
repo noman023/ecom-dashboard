@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState, Dispatch, SetStateAction } from "react";
+import { createContext, useState, useEffect } from "react";
 
 //  Define a User type
 export type UserType = {
@@ -12,7 +12,8 @@ export type UserType = {
 //  Define the context type
 type AuthContextType = {
   user: UserType | null;
-  setUser: Dispatch<SetStateAction<UserType | null>>;
+  setUser: (user: UserType | null) => void;
+  logout: () => void;
 };
 
 //. Create the context
@@ -25,12 +26,30 @@ export default function AuthContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUserState] = useState<UserType | null>(null);
 
-  const value = {
-    user,
-    setUser,
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setUserState(JSON.parse(storedUser));
+  }, []);
+
+  // set user on state and localStorage
+  const setUser = (user: UserType | null) => {
+    setUserState(user);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // logout
+  const logout = () => setUser(null);
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

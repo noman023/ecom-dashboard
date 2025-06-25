@@ -1,5 +1,7 @@
 import { Card, CardHeader } from "@/components/ui/card";
+import { AuthContext } from "@/context/AuthContext";
 import { Package, Heart, Truck, Gift, CheckCircle, Star } from "lucide-react";
+import { useContext } from "react";
 
 function InfoCard({
   label,
@@ -64,9 +66,11 @@ const activities = [
 ];
 
 export default function CustomerDashboard() {
+  const { user } = useContext(AuthContext)!;
+
   return (
     <div>
-      <h1 className="text-3xl font-bold">Hi, Alex 👋</h1>
+      <h1 className="text-3xl font-bold">Hi, {user?.name} 👋</h1>
 
       <div className="w-full flex justify-end">
         <p className="">Last Updated: Today, 10:30 AM</p>

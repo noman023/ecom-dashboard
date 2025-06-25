@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Select } from "@/components/ui/select";
 import {
@@ -13,16 +13,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { axiosInstance } from "@/hooks/useAxiosInstance";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 type RegisterForm = {
   name: string;
   email: string;
   password: string;
-  role: "seller" | "customer";
+  userRole: "seller" | "customer";
 };
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -30,8 +35,17 @@ export default function Register() {
     setValue,
   } = useForm<RegisterForm>();
 
-  const onSubmit = (data: RegisterForm) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterForm) => {
+    try {
+      const res = await axiosInstance.post("/auth/register", data);
+      toast.success("Registration successful! Please login.");
+      router.push("/login");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.error || "Registration failed. Please try again."
+      );
+      console.error("Registration failed:", err);
+    }
   };
 
   return (
@@ -83,10 +97,10 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="role">Your Role</Label>
+              <Label htmlFor="userRole">Your Role</Label>
               <Select
                 onValueChange={(value) =>
-                  setValue("role", value as "seller" | "customer")
+                  setValue("userRole", value as "seller" | "customer")
                 }
                 defaultValue=""
               >
@@ -98,9 +112,9 @@ export default function Register() {
                   <SelectItem value="customer">Customer</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.role && (
+              {errors.userRole && (
                 <span className="text-xs text-red-500">
-                  {errors.role.message as string}
+                  {errors.userRole.message as string}
                 </span>
               )}
             </div>

@@ -12,6 +12,8 @@ import { CircleAlert } from "lucide-react";
 import { Bar, BarChart } from "recharts";
 
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -79,10 +81,12 @@ function StatusCard({
 }
 
 export default function SellerDashboard() {
+  const { user } = useContext(AuthContext)!;
+
   return (
     <div>
       <div>
-        <h1 className="text-3xl font-bold">Welcome back, John Doe!</h1>
+        <h1 className="text-3xl font-bold">Welcome back, {user?.name}!</h1>
         <p className="">
           You've made <span className="font-bold">$2,450</span> today.
         </p>
