@@ -3,6 +3,7 @@ import { Navbar } from "@/components/custom/layout/Navbar";
 import { SidebarComponent } from "@/components/custom/layout/Sidebar";
 import SearchBar from "@/components/custom/layout/SearchBar";
 import { usePathname } from "next/navigation";
+import AuthContextProvider from "@/context/AuthContext";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -17,15 +18,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-1">
-      <Navbar />
-      <SearchBar />
+    <AuthContextProvider>
+      <div className="flex min-h-screen flex-col px-1">
+        <Navbar />
+        <SearchBar />
 
-      <div className="flex flex-1 border-t">
-        <SidebarComponent />
+        <div className="flex flex-1 border-t">
+          <SidebarComponent />
 
-        <main className="flex-1 overflow-auto p-4 bg-gray-50">{children}</main>
+          <main className="flex-1 overflow-auto p-4 bg-gray-50">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </AuthContextProvider>
   );
 }
