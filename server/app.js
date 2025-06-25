@@ -21,10 +21,13 @@ app.use(
 // this line to serve the uploads directory statically
 app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
 
-// root route
+// Root route
 app.get("/api", (req, res) => {
   res.send("Welcome To ecom dashboard server!");
 });
+
+// All Routes
+app.use("/api", require("./routes"));
 
 // error handler
 app.use((req, res) => {
