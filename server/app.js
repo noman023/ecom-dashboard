@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Database connection
-require("./config/database");
+require("./config/dbConfig");
 
 // Middleware
 app.use(express.json());

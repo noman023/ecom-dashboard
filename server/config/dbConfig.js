@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 // mongodb atlas connection uri
-const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASS}@cluster0.faeme9d.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASS}@cluster0.faeme9d.mongodb.net/ecom_dashboard?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Connect to MongoDB Atlas
 mongoose
