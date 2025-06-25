@@ -6,6 +6,9 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Database connection
+require("./config/database");
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
