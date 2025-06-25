@@ -12,6 +12,8 @@ import {
   Truck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
 interface NavItem {
   title: string;
@@ -73,9 +75,10 @@ const customerNavItems: NavItem[] = [
 ];
 
 export function SidebarComponent() {
-  const pathname = usePathname();
+  const { user } = useContext(AuthContext)!;
+  const { userRole } = user || {};
 
-  let userRole = "sellerr";
+  const pathname = usePathname();
 
   return (
     <div className="relative">
