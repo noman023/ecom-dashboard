@@ -48,6 +48,11 @@ const sellerNavItems: NavItem[] = [
 const customerNavItems: NavItem[] = [
   { title: "Overview", href: "/", icon: <HomeIcon className="w-5 h-5" /> },
   {
+    title: "Shop",
+    href: "/shop",
+    icon: <PackageIcon className="w-5 h-5" />,
+  },
+  {
     title: "My Orders",
     href: "/my-orders",
     icon: <Truck className="w-5 h-5" />,

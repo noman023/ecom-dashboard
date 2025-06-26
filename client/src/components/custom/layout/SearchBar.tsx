@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { AuthContext } from "@/context/AuthContext";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const categories = [
   "All Categories",
@@ -19,7 +20,8 @@ export default function SearchBar() {
   const [selectedCategory, setSelectedCategory] = useState("Categories");
   const [isOpen, setIsOpen] = useState(false);
 
-  let userRole = "seller";
+  const authState = useContext(AuthContext);
+  const { userRole } = authState?.user || {};
 
   return (
     <div className="flex items-center gap-2 w-full my-5">
@@ -72,10 +74,12 @@ export default function SearchBar() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-1 cursor-pointer">
-            <ShoppingCart className="w-6 h-6 " />
-            <p>Cart</p>
-          </div>
+          <Link href={"/cart"}>
+            <div className="flex items-center gap-1 cursor-pointer">
+              <ShoppingCart className="w-6 h-6 " />
+              <p>Cart</p>
+            </div>
+          </Link>
         </div>
       )}
     </div>

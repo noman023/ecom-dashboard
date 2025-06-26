@@ -16,6 +16,7 @@ import {
 import { axiosInstance } from "@/hooks/useAxiosInstance";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 type RegisterForm = {
   name: string;
@@ -213,7 +214,7 @@ export default function Register() {
               )}
             </div>
 
-            <Button variant={"destructive"} type="submit" className="w-full">
+            <Button type="submit" className={`w-full ${commonButtonStyle}`}>
               Register
             </Button>
           </form>

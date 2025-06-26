@@ -10,6 +10,7 @@ import { axiosInstance } from "@/hooks/useAxiosInstance";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 type LoginForm = {
   email: string;
@@ -98,7 +99,7 @@ export default function Login() {
               )}
             </div>
 
-            <Button variant={"destructive"} type="submit" className="w-full">
+            <Button type="submit" className={`w-full ${commonButtonStyle}`}>
               Login
             </Button>
           </form>

@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -31,6 +32,11 @@ export function Navbar() {
   const toggleSidebar = () => {
     const sidebar = document.querySelector("#sidebar");
     sidebar?.classList.toggle("-translate-x-full");
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logout Successfully!");
   };
 
   return (
@@ -117,9 +123,7 @@ export function Navbar() {
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => logout()}>
-                Logout
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
