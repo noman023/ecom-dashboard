@@ -22,8 +22,9 @@ import {
 import { createColumnHelper } from "@tanstack/react-table";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import Link from "next/link";
-import useTanstackQuery from "@/hooks/useAxiosInstance";
+import useTanstackQuery, { axiosInstance } from "@/hooks/useAxiosInstance";
 import { baseURL } from "@/utils/baseURL";
+import { toast } from "react-toastify";
 
 const columnHelper = createColumnHelper<any>();
 
@@ -82,6 +83,12 @@ export default function Products() {
     const matchesCategory = category === "" || item.category === category;
     return matchesSearch && matchesStock && matchesCategory;
   });
+
+  const handleDelete = async () => {
+    await axiosInstance.delete(`/products/delete/${selectedProduct.id}`);
+    toast.success("Product deleted successfully!");
+    setDeleteModalOpen(false);
+  };
 
   const columns = [
     columnHelper.accessor("image", {
@@ -230,13 +237,7 @@ export default function Products() {
             <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                // handle actual delete here
-                setDeleteModalOpen(false);
-              }}
-            >
+            <Button variant="destructive" onClick={handleDelete}>
               <Trash2 className="w-4 h-4 mr-1" /> Delete
             </Button>
           </DialogFooter>
