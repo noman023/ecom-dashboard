@@ -4,9 +4,6 @@ const bcrypt = require("bcryptjs");
 async function register(req, res) {
   const { name, email, userRole, password } = req.body;
 
-  console.log("req.body:", req.body);
-  console.log("req.file:", req.file);
-
   try {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
