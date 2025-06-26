@@ -19,7 +19,7 @@ router
   .get("/", getAllProducts)
   .get("/:id", getSingleProduct)
   .post("/add", authenticateUser, upload.array("image"), addProduct)
-  .post("/edit", authenticateUser, upload.array("image"), editProduct)
+  .put("/edit/:id", authenticateUser, upload.array("image"), editProduct)
   .delete("/delete/:id", deleteProduct);
 
 module.exports = router;

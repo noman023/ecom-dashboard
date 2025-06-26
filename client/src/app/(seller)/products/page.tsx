@@ -22,31 +22,10 @@ import {
 import { createColumnHelper } from "@tanstack/react-table";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import Link from "next/link";
+import useTanstackQuery from "@/hooks/useAxiosInstance";
+import { baseURL } from "@/utils/baseURL";
 
 const columnHelper = createColumnHelper<any>();
-
-const allData = [
-  {
-    id: 1,
-    image: null,
-    name: "Premium Cotton T-Shirt",
-    sku: "TS-001",
-    price: "$100",
-    stock: 200,
-    status: "Active",
-    category: "apparel",
-  },
-  {
-    id: 2,
-    image: null,
-    name: "Leather Wallet",
-    sku: "WL-002",
-    price: "$50",
-    stock: 200,
-    status: "Active",
-    category: "accessories",
-  },
-];
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -55,11 +34,44 @@ export default function Products() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-  // Example filter logic
+  const { data, isLoading, isError, error, refetch } =
+    useTanstackQuery("/products");
+
+  // Handle loading and error states
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading products...</div>;
+  }
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        Error loading products: {error?.message || "Unknown error"}
+      </div>
+    );
+  }
+
+  // Prepare and map data
+  const allData =
+    data?.products?.map((item: any) => ({
+      id: item._id,
+      image: item.images?.[0] || null,
+      name: item.title,
+      sku: item.sku,
+      price: `$${item.price}`,
+      stock: item.quantity,
+      status:
+        item.quantity === 0
+          ? "Out of Stock"
+          : item.quantity < 10
+          ? "Low Stock"
+          : "Active",
+      category: item.category,
+    })) || [];
+
+  // Filtering logic
   const filteredData = allData.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.sku.toLowerCase().includes(search.toLowerCase());
+      (item.sku || "").toLowerCase().includes(search.toLowerCase());
 
     const matchesStock =
       stockStatus === "" ||
@@ -68,14 +80,22 @@ export default function Products() {
       (stockStatus === "out" && item.status === "Out of Stock");
 
     const matchesCategory = category === "" || item.category === category;
-    // Add category filter logic if you have categories
     return matchesSearch && matchesStock && matchesCategory;
   });
 
   const columns = [
     columnHelper.accessor("image", {
       header: "Image",
-      cell: () => <div className="w-8 h-8 bg-gray-200 rounded" />,
+      cell: (info) =>
+        info.row.original.image ? (
+          <img
+            src={`${baseURL}/uploads/${info.row.original.image}`}
+            alt={info.row.original.name}
+            className="w-8 h-8 object-cover rounded"
+          />
+        ) : (
+          <div className="w-8 h-8 bg-gray-200 rounded" />
+        ),
     }),
     columnHelper.accessor("name", {
       header: "Name",
@@ -95,11 +115,17 @@ export default function Products() {
     }),
     columnHelper.accessor("status", {
       header: "Status",
-      cell: (info) => (
-        <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-medium">
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info) => {
+        const status = info.getValue();
+        let color = "bg-green-100 text-green-700";
+        if (status === "Low Stock") color = "bg-yellow-100 text-yellow-700";
+        if (status === "Out of Stock") color = "bg-red-100 text-red-700";
+        return (
+          <span className={`px-2 py-1 rounded text-xs font-medium ${color}`}>
+            {status}
+          </span>
+        );
+      },
     }),
     columnHelper.display({
       id: "actions",
