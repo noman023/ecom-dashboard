@@ -30,6 +30,8 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await axiosInstance.post("/auth/login", data);
+      // Store token
+      localStorage.setItem("token", res.data.token);
       authState?.setUser(res.data.user);
       toast.success("Login successful!");
       router.push("/");

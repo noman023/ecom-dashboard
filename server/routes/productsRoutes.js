@@ -9,6 +9,8 @@ const {
 const {
   getSingleProduct,
 } = require("../controller/productsController/getSingleProduct");
+
+const { authenticateUser } = require("../middleware/authMiddlware");
 const upload = require("../middleware/uploadMiddleware");
 
 const router = require("express").Router();
@@ -16,8 +18,8 @@ const router = require("express").Router();
 router
   .get("/", getAllProducts)
   .get("/:id", getSingleProduct)
-  .post("/add", upload.array("image"), addProduct)
-  .post("/edit", upload.array("image"), editProduct)
+  .post("/add", authenticateUser, upload.array("image"), addProduct)
+  .post("/edit", authenticateUser, upload.array("image"), editProduct)
   .delete("/delete/:id", deleteProduct);
 
 module.exports = router;
