@@ -62,8 +62,8 @@ export type ProductFormType = {
   condition: string;
   features: string[];
   price: string;
-  salePrice: string;
   quantity: string;
+  salePrice?: string;
   sku?: string;
   negotiation?: boolean;
   tags?: string;

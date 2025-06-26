@@ -1,5 +1,5 @@
-const { login } = require("../controller/auth/loginController");
-const { register } = require("../controller/auth/registerController");
+const { login } = require("../controller/authController/login");
+const { register } = require("../controller/authController/register");
 const upload = require("../middleware/uploadMiddleware");
 
 const router = require("express").Router();
