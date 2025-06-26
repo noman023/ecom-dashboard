@@ -15,6 +15,10 @@ export default function ProtectedRoute({
   // Allow public access to login and register
   const isAuthPage = pathname === "/login" || pathname === "/register";
 
+  if (auth?.loading) {
+    return "Loading..";
+  }
+
   useEffect(() => {
     if (!auth?.user && !isAuthPage) {
       router.replace("/login");

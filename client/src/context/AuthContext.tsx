@@ -14,6 +14,7 @@ type AuthContextType = {
   user: UserType | null;
   setUser: (user: UserType | null) => void;
   logout: () => void;
+  loading: boolean;
 };
 
 //. Create the context
@@ -27,11 +28,13 @@ export default function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const [user, setUserState] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Load user from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUserState(JSON.parse(storedUser));
+    setLoading(false);
   }, []);
 
   // set user on state and localStorage
@@ -48,7 +51,7 @@ export default function AuthContextProvider({
   const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout }}>
+    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
