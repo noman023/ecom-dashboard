@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import { baseURL } from "@/utils/baseURL";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -106,10 +107,15 @@ export function Navbar() {
                 variant="ghost"
                 className="flex items-center hover:bg-gray-light rounded-md p-1"
               >
-                <Avatar className="h-6 w-6 mr-2">
+                <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"
+                    src={
+                      user?.image
+                        ? `${baseURL}/uploads/${user.image}`
+                        : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"
+                    }
                     alt="Alex Morgan"
+                    className="object-cover"
                   />
                   <AvatarFallback>AM</AvatarFallback>
                 </Avatar>
@@ -121,9 +127,16 @@ export function Navbar() {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Profile
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer"
+              >
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

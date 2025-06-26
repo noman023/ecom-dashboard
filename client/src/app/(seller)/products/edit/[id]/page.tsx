@@ -1,7 +1,18 @@
 "use client";
+
+import {
+  ProductForm,
+  ProductFormType,
+} from "@/components/custom/products/ProductForm";
+
 import { ArrowLeft } from "lucide-react";
 
 export default function EditProduct() {
+  const handleEdit = (data: ProductFormType) => {
+    // handle add logic (API call, etc.)
+    console.log(data);
+  };
+
   return (
     <div>
       <div className="flex gap-2">
@@ -19,7 +30,7 @@ export default function EditProduct() {
         </div>
       </div>
 
-      <form></form>
+      <ProductForm onSubmit={handleEdit} isEdit />
     </div>
   );
 }

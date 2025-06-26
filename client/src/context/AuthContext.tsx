@@ -7,6 +7,7 @@ export type UserType = {
   name?: string;
   email?: string;
   userRole?: string;
+  image?: string;
 };
 
 //  Define the context type
