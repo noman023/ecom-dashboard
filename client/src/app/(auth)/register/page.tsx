@@ -100,7 +100,9 @@ export default function Register() {
             encType="multipart/form-data"
           >
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="name"
                 type="text"
@@ -115,7 +117,9 @@ export default function Register() {
               )}
             </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">
+                Email <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -137,7 +141,9 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="userRole">Your Role</Label>
+              <Label htmlFor="userRole">
+                Your Role <span className="text-red-500">*</span>
+              </Label>
               <Select
                 onValueChange={(value) =>
                   setValue("userRole", value as "seller" | "customer")
@@ -160,7 +166,9 @@ export default function Register() {
             </div>
 
             <div className="relative">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">
+                Password <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
