@@ -13,35 +13,10 @@ import {
 import { Eye, Truck, X } from "lucide-react";
 import { useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
+import useTanstackQuery from "@/hooks/useAxiosInstance";
+import { useRouter } from "next/navigation";
 
 const columnHelper = createColumnHelper<any>();
-
-const allData = [
-  {
-    id: "Ord-01",
-    date: "2025-05-15",
-    buyer: "Mike Turner",
-    amount: "$200",
-    status: "Pending",
-    product: "Wireless Earbuds X200",
-  },
-  {
-    id: "Ord-02",
-    date: "2025-05-14",
-    buyer: "Will Turner",
-    amount: "$100",
-    status: "Shipped",
-    product: "Leather Wallet",
-  },
-  {
-    id: "Ord-03",
-    date: "2025-05-13",
-    buyer: "Jane Doe",
-    amount: "$50",
-    status: "Delivered",
-    product: "Premium Cotton T-Shirt",
-  },
-];
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -63,8 +38,28 @@ export default function Orders() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
+  const router = useRouter();
+
+  const { data, refetch } = useTanstackQuery("/orders/seller");
+
+  // Flatten orders for table: each row is an item in an order
+  const allData =
+    data?.orders?.flatMap((order: any) =>
+      order.items.map((item: any) => ({
+        id: `ORD-${order._id.slice(-6)}`,
+        date: order.createdAt,
+        buyer: order.buyer?.name || "N/A",
+        amount: `$${order.total?.toFixed(2) ?? "N/A"}`,
+        status: order.status,
+        product: item.product?.title || "N/A",
+        quantity: item.quantity,
+        orderObj: order,
+        itemObj: item,
+      }))
+    ) || [];
+
   // Filter by search and status tab
-  const filteredData = allData.filter((item) => {
+  const filteredData = allData.filter((item: any) => {
     const q = search.toLowerCase();
     const matchesSearch =
       item.id.toLowerCase().includes(q) || item.buyer.toLowerCase().includes(q);
@@ -119,7 +114,14 @@ export default function Orders() {
             <Eye className="w-4 h-4 mr-1" /> View
           </Button>
           {info.row.original.status === "Pending" && (
-            <Button size="sm" variant="destructive" className="px-2 py-1 h-8">
+            <Button
+              size="sm"
+              variant="destructive"
+              className="px-2 py-1 h-8"
+              onClick={() =>
+                router.push(`/ship-order/${info.row.original.orderObj._id}`)
+              }
+            >
               <Truck className="w-4 h-4 mr-1" /> Ship
             </Button>
           )}
@@ -188,6 +190,10 @@ export default function Orders() {
             <span className="font-medium">{selectedOrder?.product}</span>
           </div>
           <div className="mb-2 flex">
+            <span className="w-24 text-gray-500">Quantity:</span>
+            <span>{selectedOrder?.quantity}</span>
+          </div>
+          <div className="mb-2 flex">
             <span className="w-24 text-gray-500">Amount:</span>
             <span>{selectedOrder?.amount}</span>
           </div>
@@ -195,12 +201,19 @@ export default function Orders() {
             <span className="w-24 text-gray-500">Customer:</span>
             <span>{selectedOrder?.buyer}</span>
           </div>
+
           <DialogFooter className="flex justify-center gap-2">
             <Button variant="outline" onClick={() => setViewModalOpen(false)}>
               <X className="w-4 h-4 mr-1" /> Cancel
             </Button>
+
             {selectedOrder?.status === "Pending" && (
-              <Button variant="destructive">
+              <Button
+                variant="destructive"
+                onClick={() =>
+                  router.push(`/ship-order/${selectedOrder.orderObj._id}`)
+                }
+              >
                 <Truck className="w-4 h-4 mr-1" /> Ship
               </Button>
             )}
