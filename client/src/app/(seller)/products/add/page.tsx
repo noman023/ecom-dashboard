@@ -44,8 +44,11 @@ export default function AddProduct() {
       }
 
       // Images (FileList)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (data.images && Array.from(data.images).some((file) => file.size > maxSize)) {
+      const maxSize = 10 * 1024 * 1024;
+      if (
+        data.images &&
+        Array.from(data.images).some((file) => file.size > maxSize)
+      ) {
         toast.error("Each image must be 5MB or less.");
         return;
       }
