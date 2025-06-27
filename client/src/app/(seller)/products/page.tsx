@@ -69,7 +69,7 @@ export default function Products() {
     })) || [];
 
   // Filtering logic
-  const filteredData = allData.filter((item) => {
+  const filteredData = allData.filter((item: any) => {
     const matchesSearch =
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       (item.sku || "").toLowerCase().includes(search.toLowerCase());
@@ -87,6 +87,7 @@ export default function Products() {
   const handleDelete = async () => {
     await axiosInstance.delete(`/products/delete/${selectedProduct.id}`);
     toast.success("Product deleted successfully!");
+    refetch();
     setDeleteModalOpen(false);
   };
 

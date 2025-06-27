@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -7,56 +8,55 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AlertCircle, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
+import Link from "next/link";
+import { baseURL } from "@/utils/baseURL";
+import { toast } from "react-toastify";
+import axiosInstance from "@/hooks/useAxiosInstance";
 
-const cartItems = [
-  {
-    id: "1",
-    name: "Wireless Noise-Cancelling Headphones",
-    variant: "Black | Premium Edition",
-    price: 249.99,
-    quantity: 1,
-    image: "",
-  },
-  {
-    id: "2",
-    name: "Wireless Noise-Cancelling Headphones",
-    variant: "Black | Premium Edition",
-    price: 249.99,
-    quantity: 1,
-    image: "",
-  },
-  {
-    id: "3",
-    name: "Wireless Noise-Cancelling Headphones",
-    variant: "Black | Premium Edition",
-    price: 249.99,
-    quantity: 1,
-    image: "",
-  },
-  {
-    id: "4",
-    name: "Wireless Noise-Cancelling Headphones",
-    variant: "Black | Premium Edition",
-    price: 249.99,
-    quantity: 1,
-    image: "",
-  },
-];
+type AddressForm = {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+};
+
+type CheckoutForm = {
+  shippingMethod: string;
+  paymentMethod: string;
+  promo: string;
+} & AddressForm;
 
 export default function CheckoutPage() {
-  const [shippingMethod, setShippingMethod] = useState("home");
-  const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [promo, setPromo] = useState("");
-  const [address, setAddress] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CheckoutForm>({
+    defaultValues: {
+      shippingMethod: "home",
+      paymentMethod: "cod",
+      promo: "",
+      name: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+    },
   });
 
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("checkoutItems") || "[]");
+    setCartItems(items);
+  }, []);
+
+  // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -65,11 +65,38 @@ export default function CheckoutPage() {
   const tax = 0;
   const total = subtotal + shipping + tax;
 
+  // Handle form submit
+  const onSubmit = async (data: CheckoutForm) => {
+    try {
+      // Prepare order payload
+      const orderItems = cartItems.map((item) => ({
+        product: item.id,
+        quantity: item.quantity,
+      }));
+
+      const payload = {
+        ...data,
+        items: orderItems,
+        total,
+      };
+      console.log(payload);
+
+      // await axiosInstance.post("/orders/create", payload);
+
+      // toast.success("Order placed successfully!");
+      // Optionally clear cart and redirect
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || "Order failed");
+    }
+  };
+
   return (
-    <div>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <h1 className="text-2xl font-bold mb-2">CHECKOUT</h1>
       <div className="flex items-center gap-2 text-sm mb-6">
-        <span className="font-semibold text-blue-500">Cart</span>
+        <Link href={"/cart"}>
+          <span className="font-semibold text-blue-500">Cart</span>
+        </Link>
         <span className="text-gray-400">{">"}</span>
         <span className="font-semibold text-blue-500">Checkout</span>
         <span className="text-gray-400">{">"}</span>
@@ -81,24 +108,20 @@ export default function CheckoutPage() {
         <h2 className="font-semibold mb-4">Shipping Information</h2>
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <RadioGroup
-            value={shippingMethod}
-            onValueChange={setShippingMethod}
+            value={undefined}
+            defaultValue="home"
             className="flex flex-row gap-4"
+            {...register("shippingMethod")}
+            onValueChange={(val) => setValue("shippingMethod", val)}
           >
             <label
-              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer ${
-                shippingMethod === "home" ? "border-red-500" : "border-gray-200"
-              }`}
+              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer`}
             >
               <RadioGroupItem value="home" />
               <span>Home Delivery</span>
             </label>
             <label
-              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer ${
-                shippingMethod === "store"
-                  ? "border-red-500"
-                  : "border-gray-200"
-              }`}
+              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer`}
             >
               <RadioGroupItem value="store" />
               <span>Store Pickup</span>
@@ -112,8 +135,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="Full Name"
-              value={address.name}
-              onChange={(e) => setAddress({ ...address, name: e.target.value })}
+              {...register("name", { required: true })}
               className="mb-2"
             />
             <label className="block text-sm font-medium mb-1">
@@ -121,10 +143,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="Phone Number"
-              value={address.phone}
-              onChange={(e) =>
-                setAddress({ ...address, phone: e.target.value })
-              }
+              {...register("phone", { required: true })}
               className="mb-2"
             />
             <label className="block text-sm font-medium mb-1">
@@ -132,10 +151,7 @@ export default function CheckoutPage() {
             </label>
             <Textarea
               placeholder="Street address"
-              value={address.address}
-              onChange={(e) =>
-                setAddress({ ...address, address: e.target.value })
-              }
+              {...register("address", { required: true })}
               className="mb-2"
               rows={2}
             />
@@ -146,8 +162,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="City"
-              value={address.city}
-              onChange={(e) => setAddress({ ...address, city: e.target.value })}
+              {...register("city", { required: true })}
               className="mb-2"
             />
             <label className="block text-sm font-medium mb-1">
@@ -155,10 +170,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="State"
-              value={address.state}
-              onChange={(e) =>
-                setAddress({ ...address, state: e.target.value })
-              }
+              {...register("state", { required: true })}
               className="mb-2"
             />
             <label className="block text-sm font-medium mb-1">
@@ -166,8 +178,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="Zip/Postal Code"
-              value={address.zip}
-              onChange={(e) => setAddress({ ...address, zip: e.target.value })}
+              {...register("zip", { required: true })}
               className="mb-2"
             />
             <label className="block text-sm font-medium mb-1">
@@ -175,10 +186,7 @@ export default function CheckoutPage() {
             </label>
             <Input
               placeholder="Country"
-              value={address.country}
-              onChange={(e) =>
-                setAddress({ ...address, country: e.target.value })
-              }
+              {...register("country", { required: true })}
               className="mb-2"
             />
           </div>
@@ -196,23 +204,17 @@ export default function CheckoutPage() {
         <h2 className="font-semibold mb-4">Payment Method</h2>
         <div className="flex flex-col gap-2 mb-4">
           <RadioGroup
-            value={paymentMethod}
-            onValueChange={setPaymentMethod}
+            value={undefined}
+            defaultValue="cod"
             className="flex flex-row gap-4"
+            {...register("paymentMethod")}
+            onValueChange={(val) => setValue("paymentMethod", val)}
           >
-            <label
-              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer ${
-                paymentMethod === "cod" ? "border-red-500" : "border-gray-200"
-              }`}
-            >
+            <label className="flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer">
               <RadioGroupItem value="cod" />
               <span>Cash on Delivery</span>
             </label>
-            <label
-              className={`flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer ${
-                paymentMethod === "card" ? "border-red-500" : "border-gray-200"
-              }`}
-            >
+            <label className="flex items-center gap-2 border rounded-md px-4 py-2 cursor-pointer">
               <RadioGroupItem value="card" />
               <span>Credit/Debit Card</span>
             </label>
@@ -225,42 +227,14 @@ export default function CheckoutPage() {
             processed securely.
           </span>
         </div>
-        {paymentMethod === "card" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Card Number <span className="text-red-500">*</span>
-              </label>
-              <Input placeholder="Card Number" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Name on Card <span className="text-red-500">*</span>
-              </label>
-              <Input placeholder="Name on Card" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Expiry Date <span className="text-red-500">*</span>
-              </label>
-              <Input placeholder="MM/YY" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                CVV <span className="text-red-500">*</span>
-              </label>
-              <Input placeholder="CVV" />
-            </div>
-          </div>
-        )}
+        {/* Optionally show card fields if paymentMethod === "card" */}
       </div>
 
       {/* Promo code */}
       <div className="flex items-center gap-2 mb-6">
         <Input
           placeholder="Promo code"
-          value={promo}
-          onChange={(e) => setPromo(e.target.value)}
+          {...register("promo")}
           className="w-60"
         />
         <Button className="bg-red-500 hover:bg-red-600 text-white font-semibold">
@@ -276,7 +250,11 @@ export default function CheckoutPage() {
           {cartItems.map((item) => (
             <div key={item.id} className="flex items-center py-3">
               <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-4">
-                <span className="text-gray-400 text-xs">IMG</span>
+                <img
+                  src={`${baseURL}/uploads/${item.image}`}
+                  alt={item.name}
+                  className="w-full h-full object-cover rounded"
+                />
               </div>
 
               <div className="flex-1">
@@ -297,6 +275,7 @@ export default function CheckoutPage() {
                 variant="ghost"
                 className="text-gray-400 hover:text-red-500 ml-2"
                 aria-label="Remove"
+                type="button"
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
@@ -325,9 +304,11 @@ export default function CheckoutPage() {
         </div>
 
         <div className="flex justify-end">
-          <Button className={commonButtonStyle}>Place Order</Button>
+          <Button className={commonButtonStyle} type="submit">
+            Place Order
+          </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

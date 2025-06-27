@@ -5,79 +5,64 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
-
-const cartData = [
-  {
-    store: "Tech Gadget Store",
-    items: [
-      {
-        id: "1",
-        name: "Wireless Noise-Cancelling Headphones",
-        variant: "Black | Premium Edition",
-        price: 249.99,
-        quantity: 1,
-        image: "",
-      },
-      {
-        id: "2",
-        name: "Wireless Noise-Cancelling Headphones",
-        variant: "Black | Premium Edition",
-        price: 249.99,
-        quantity: 1,
-        image: "",
-      },
-    ],
-  },
-  {
-    store: "Super Gadgets",
-    items: [
-      {
-        id: "3",
-        name: "Wireless Noise-Cancelling Headphones",
-        variant: "Black | Premium Edition",
-        price: 249.99,
-        quantity: 1,
-        image: "",
-      },
-      {
-        id: "4",
-        name: "Wireless Noise-Cancelling Headphones",
-        variant: "Black | Premium Edition",
-        price: 249.99,
-        quantity: 1,
-        image: "",
-      },
-    ],
-  },
-];
+import useTanstackQuery from "@/hooks/useAxiosInstance";
+import { baseURL } from "@/utils/baseURL";
+import Link from "next/link";
 
 export default function CartPage() {
   const [selected, setSelected] = useState<{ [id: string]: boolean }>({});
-  const [quantities, setQuantities] = useState<{ [id: string]: number }>(() => {
-    const q: { [id: string]: number } = {};
-    cartData.forEach((store) =>
-      store.items.forEach((item) => {
-        q[item.id] = item.quantity;
-      })
-    );
-    return q;
-  });
   const [promo, setPromo] = useState("");
+  const [quantities, setQuantities] = useState<{ [id: string]: number }>({}); // <-- move here
+
+  const { data, isLoading, isError, error } = useTanstackQuery("/cart");
+
+  // Handle loading and error states
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading products...</div>;
+  }
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        Error loading products: {error?.message || "Unknown error"}
+      </div>
+    );
+  }
+
+  // Group cart items by seller name
+  const grouped = (data?.items || []).reduce((acc: any, cartItem: any) => {
+    const sellerName = cartItem.product.seller?.name || "Unknown Store";
+    if (!acc[sellerName]) {
+      acc[sellerName] = { store: sellerName, items: [] };
+    }
+    acc[sellerName].items.push({
+      id: cartItem.product._id,
+      name: cartItem.product.title,
+      variant: cartItem.product.model,
+      price: cartItem.product.price,
+      quantity: cartItem.quantity,
+      image: cartItem.product.images?.[0] || "",
+    });
+    return acc;
+  }, {});
+  const cartData = Object.values(grouped);
 
   // Calculate totals
-  const allItems = cartData.flatMap((s) => s.items);
-  const subtotal = allItems.reduce(
-    (sum, item) => sum + (quantities[item.id] || 1) * item.price,
+  const allItems = cartData.flatMap((s: any) => s.items);
+  const selectedItems = allItems.filter((item: any) => selected[item.id]);
+  const subtotal = selectedItems.reduce(
+    (sum: number, item: any) =>
+      sum + (quantities[item.id] || item.quantity || 1) * item.price,
     0
   );
   const shipping = 0;
   const tax = 0;
   const total = subtotal + shipping + tax;
 
+  // Selection logic
   const toggleAll = (checked: boolean) => {
     const updates: { [id: string]: boolean } = {};
-    cartData.forEach((store) =>
-      store.items.forEach((item) => {
+    cartData.forEach((store: any) =>
+      store.items.forEach((item: any) => {
         updates[item.id] = checked;
       })
     );
@@ -85,10 +70,10 @@ export default function CartPage() {
   };
 
   const toggleStore = (store: string, checked: boolean) => {
-    const storeObj = cartData.find((w) => w.store === store);
+    const storeObj = cartData.find((w: any) => w.store === store);
     if (!storeObj) return;
     const updates: { [id: string]: boolean } = {};
-    storeObj.items.forEach((item) => {
+    storeObj.items.forEach((item: any) => {
       updates[item.id] = checked;
     });
     setSelected((prev) => ({ ...prev, ...updates }));
@@ -98,11 +83,11 @@ export default function CartPage() {
     setSelected((prev) => ({ ...prev, [id]: checked }));
   };
 
-  const allSelected = () => allItems.every((item) => selected[item.id]);
+  const allSelected = () => allItems.every((item: any) => selected[item.id]);
   const storeAllSelected = (store: string) => {
-    const storeObj = cartData.find((w) => w.store === store);
-    if (!storeObj) return false;
-    return storeObj.items.every((item) => selected[item.id]);
+    const storeObj = cartData.find((w: any) => w.store === store);
+    if (!storeObj || !storeObj.items) return false;
+    return storeObj.items.every((item: any) => selected[item.id]);
   };
 
   const handleQty = (id: string, delta: number) => {
@@ -137,7 +122,7 @@ export default function CartPage() {
             </Button>
           </div>
 
-          {cartData.map((store) => (
+          {cartData.map((store: any) => (
             <div key={store.store} className="border-b last:border-b-0">
               <div className="flex items-center px-4 py-3 border-b gap-2 bg-gray-50">
                 <Checkbox
@@ -146,9 +131,9 @@ export default function CartPage() {
                     toggleStore(store.store, !!checked)
                   }
                 />
-                <span className="ml-2 font-semibold">{store.store}</span>
+                <span className="ml-2 font-semibold">{store.store} Store</span>
               </div>
-              {store.items.map((item) => (
+              {store.items.map((item: any) => (
                 <div
                   key={item.id}
                   className="flex items-center px-4 py-4 border-b last:border-b-0"
@@ -160,8 +145,15 @@ export default function CartPage() {
                     }
                   />
                   <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center ml-4 mr-4">
-                    {/* Placeholder for image */}
-                    <span className="text-gray-400 text-xs">IMG</span>
+                    {item.image ? (
+                      <img
+                        src={`${baseURL}/uploads/${item.image}`}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded"
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-xs">IMG</span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="font-medium">{item.name}</div>
@@ -241,9 +233,20 @@ export default function CartPage() {
               <span>${total.toFixed(2)}</span>
             </div>
 
-            <Button className={`${commonButtonStyle} w-full`}>
-              Proceed to Checkout
-            </Button>
+            <Link href="/checkout">
+              <Button
+                className={`${commonButtonStyle} w-full`}
+                // store selected items on localStorage
+                onClick={() => {
+                  localStorage.setItem(
+                    "checkoutItems",
+                    JSON.stringify(selectedItems)
+                  );
+                }}
+              >
+                Proceed to Checkout
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
