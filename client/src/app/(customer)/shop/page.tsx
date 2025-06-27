@@ -5,8 +5,11 @@ import useTanstackQuery, { axiosInstance } from "@/hooks/useAxiosInstance";
 import { toast } from "react-toastify";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { baseURL } from "@/utils/baseURL";
+import { Heart } from "lucide-react";
+import { useState } from "react";
 
 export default function ShopPage() {
+  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const { data, isLoading, isError, error } = useTanstackQuery("/products");
 
   // Handle loading and error states
@@ -31,12 +34,22 @@ export default function ShopPage() {
     }
   };
 
+  const handleAddToWishlist = async (productId: string) => {
+    try {
+      await axiosInstance.post("/wishlist/add", { productId });
+      toast.success("Added to wishlist!");
+      setWishlistIds((prev) => [...prev, productId]);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || "Could not add to wishlist");
+    }
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Shop Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.products.map((product: any) => (
-          <Card key={product._id} className="flex flex-col">
+          <Card key={product._id} className="flex flex-col shadow-lg">
             <CardHeader>
               <CardTitle>{product.title}</CardTitle>
             </CardHeader>
@@ -50,13 +63,28 @@ export default function ShopPage() {
               )}
               <p className="text-gray-700 mb-2">{product.sku}</p>
               <div className="font-semibold text-lg mb-4">${product.price}</div>
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  title="Add to Wishlist"
+                  onClick={() => handleAddToWishlist(product._id)}
+                  disabled={wishlistIds.includes(product._id)}
+                >
+                  <Heart
+                    className={`w-8 h-8 mr-2 ${
+                      wishlistIds.includes(product._id)
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-red-500 cursor-pointer"
+                    }`}
+                  />
+                </button>
 
-              <Button
-                onClick={() => handleAddToCart(product._id)}
-                className={`${commonButtonStyle} w-full`}
-              >
-                Add to Cart
-              </Button>
+                <Button
+                  onClick={() => handleAddToCart(product._id)}
+                  className={`${commonButtonStyle}`}
+                >
+                  Add to Cart
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
