@@ -68,14 +68,14 @@ export default function SearchBar() {
       {userRole === "customer" && (
         <div className="flex items-center gap-4 ml-4 text-gray-600">
           <Link href={`/wishlist`}>
-            <div className="flex items-center gap-1 text-gray-600 cursor-pointer">
+            <div className="flex items-center gap-1 text-gray-600 cursor-pointer hover:text-red-500">
               <Heart className="w-6 h-6 " />
               <p>Wishlist</p>
             </div>
           </Link>
 
           <Link href={"/cart"}>
-            <div className="flex items-center gap-1 cursor-pointer">
+            <div className="flex items-center gap-1 cursor-pointer hover:text-red-500">
               <ShoppingCart className="w-6 h-6 " />
               <p>Cart</p>
             </div>

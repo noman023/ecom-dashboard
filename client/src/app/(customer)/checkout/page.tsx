@@ -11,7 +11,8 @@ import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import Link from "next/link";
 import { baseURL } from "@/utils/baseURL";
 import { toast } from "react-toastify";
-import axiosInstance from "@/hooks/useAxiosInstance";
+import { axiosInstance } from "@/hooks/useAxiosInstance";
+import { useRouter } from "next/navigation";
 
 type AddressForm = {
   name: string;
@@ -31,6 +32,8 @@ type CheckoutForm = {
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -79,12 +82,12 @@ export default function CheckoutPage() {
         items: orderItems,
         total,
       };
-      console.log(payload);
 
-      // await axiosInstance.post("/orders/create", payload);
-
-      // toast.success("Order placed successfully!");
-      // Optionally clear cart and redirect
+      await axiosInstance.post("orders/create", payload);
+      toast.success("Order placed successfully!");
+      localStorage.removeItem("checkoutItems");
+      setCartItems([]);
+      router.push("/my-orders");
     } catch (err: any) {
       toast.error(err?.response?.data?.error || "Order failed");
     }

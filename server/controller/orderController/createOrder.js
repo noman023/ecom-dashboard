@@ -1,6 +1,7 @@
-const Order = require("../../../models/OrderModel");
+const Order = require("../../models/OrderModel");
+const Cart = require("../../models/CartModel");
 
-async function addOrder(req, res) {
+async function createOrder(req, res) {
   try {
     const userId = req.user._id;
     const {
@@ -30,10 +31,18 @@ async function addOrder(req, res) {
     });
 
     await order.save();
+
+    // Remove ordered items from cart
+    const productIds = items.map((item) => item.product.toString());
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { $pull: { items: { product: { $in: productIds } } } }
+    );
+
     res.status(201).json({ message: "Order placed successfully", order });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
 
-module.exports = { addOrder };
+module.exports = { createOrder };

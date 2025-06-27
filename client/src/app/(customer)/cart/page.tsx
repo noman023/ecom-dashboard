@@ -44,7 +44,7 @@ export default function CartPage() {
     });
     return acc;
   }, {});
-  const cartData = Object.values(grouped);
+  const cartData = Object.values(grouped) as { store: string; items: any[] }[];
 
   // Calculate totals
   const allItems = cartData.flatMap((s: any) => s.items);
