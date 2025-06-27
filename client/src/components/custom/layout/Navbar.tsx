@@ -37,6 +37,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem("token");
     toast.success("Logout Successfully!");
   };
 
