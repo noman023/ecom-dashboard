@@ -14,7 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://ecom-client-xi-seven.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -25,7 +28,7 @@ app.use(
 app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Root route
-app.get("/api", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Welcome To ecom dashboard server!");
 });
 
