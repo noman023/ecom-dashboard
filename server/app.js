@@ -17,8 +17,9 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://ecom-client-xi-seven.vercel.app",
+      "https://ecom-client-noman023-mojammel-nomans-projects.vercel.app",
     ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })
