@@ -36,7 +36,8 @@ export default function Products() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const { data, isLoading, isError, error, refetch } =
-    useTanstackQuery("/products");
+    useTanstackQuery("/products/seller");
+  console.log(data);
 
   // Handle loading and error states
   if (isLoading) {
