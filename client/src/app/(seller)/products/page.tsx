@@ -37,7 +37,6 @@ export default function Products() {
 
   const { data, isLoading, isError, error, refetch } =
     useTanstackQuery("/products/seller");
-  console.log(data);
 
   // Handle loading and error states
   if (isLoading) {
