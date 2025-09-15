@@ -18,30 +18,13 @@ export default function AddProduct() {
       formData.append("description", data.description);
       formData.append("category", data.category);
       formData.append("brand", data.brand);
-      formData.append("model", data.model);
-      formData.append("storage", data.storage);
-      formData.append("ram", data.ram);
-      formData.append("colour", data.colour);
-      formData.append("condition", data.condition);
+      formData.append("color", data.color);
       formData.append("price", data.price);
       formData.append("quantity", data.quantity);
 
       // Optional fields
-      if (data.salePrice) formData.append("salePrice", data.salePrice);
-      if (data.sku) formData.append("sku", data.sku);
-      if (data.negotiation)
-        formData.append("negotiation", String(data.negotiation));
-      if (data.tags) formData.append("tags", data.tags);
-      if (data.seoTitle) formData.append("seoTitle", data.seoTitle);
-      if (data.seoDescription)
-        formData.append("seoDescription", data.seoDescription);
-
-      // Features (array)
-      if (data.features && data.features.length > 0) {
-        data.features.forEach((feature) =>
-          formData.append("features", feature)
-        );
-      }
+      if (data.wholesalePrice)
+        formData.append("wholesalePrice", data.wholesalePrice);
 
       // Images (FileList)
       const maxSize = 10 * 1024 * 1024;
@@ -49,7 +32,7 @@ export default function AddProduct() {
         data.images &&
         Array.from(data.images).some((file) => file.size > maxSize)
       ) {
-        toast.error("Each image must be 5MB or less.");
+        toast.error("Each image must be 10MB or less.");
         return;
       }
 

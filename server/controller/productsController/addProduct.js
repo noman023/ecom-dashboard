@@ -7,20 +7,10 @@ async function addProduct(req, res) {
       description,
       category,
       brand,
-      model,
-      storage,
-      ram,
-      colour,
-      condition,
-      features,
+      color,
       price,
-      salePrice,
+      wholesalePrice,
       quantity,
-      sku,
-      negotiation,
-      tags,
-      seoTitle,
-      seoDescription,
     } = req.body;
 
     // Handle images (multer saves files in req.files)
@@ -35,21 +25,11 @@ async function addProduct(req, res) {
       images,
       category,
       brand,
-      model,
-      storage,
-      ram,
-      colour,
-      condition,
-      features: features ? Array.isArray(features) ? features : [features] : [],
+      color,
       price,
-      salePrice,
+      wholesalePrice,
       quantity,
-      sku,
-      negotiation,
-      tags,
-      seoTitle,
-      seoDescription,
-      seller: req.user?._id, // if using auth middleware
+      seller: req.user?._id,
     });
 
     await product.save();

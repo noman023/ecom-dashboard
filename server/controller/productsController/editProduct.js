@@ -10,7 +10,9 @@ async function editProduct(req, res) {
       updateData.images = req.files.map((file) => file.filename);
     }
 
-    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+    const product = await Product.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
     if (!product) return res.status(404).json({ error: "Product not found" });
 
     res.json({ message: "Product updated successfully", product });
