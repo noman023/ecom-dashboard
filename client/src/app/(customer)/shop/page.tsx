@@ -54,9 +54,9 @@ export default function ShopPage() {
               <CardTitle>{product.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              {Array.isArray(product.images) && product.images.length > 0 && (
+              {product.image && (
                 <img
-                  src={`${baseURL}/uploads/${product.images[0]}`}
+                  src={`${product.image}`}
                   alt={product.title}
                   className="w-full h-40 object-cover rounded mb-2"
                 />

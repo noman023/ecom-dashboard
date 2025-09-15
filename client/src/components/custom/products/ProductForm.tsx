@@ -31,7 +31,7 @@ const CATEGORIES = [
 export type ProductFormType = {
   title: string;
   description: string;
-  images: FileList | null;
+  image: FileList | null;
   category: string;
   brand: string;
   color: string;
@@ -99,48 +99,52 @@ export function ProductForm({
 
         <div className="mb-4">
           <Label>
-            Product Images <span className="text-red-500">*</span>
+            Product Image <span className="text-red-500">*</span>
           </Label>
           <div
-            className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 cursor-pointer"
+            className="mt-1 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
             <UploadCloud className="w-10 h-10 text-gray-400 mb-2" />
             <div className="font-medium mb-1">
-              Drag &amp; drop product images
+              Drag &amp; drop product image
             </div>
             <div className="text-xs text-gray-500 mb-2">
-              or click to browse files (PNG, JPG, WEBP up to 5MB each)
+              or click to browse file (PNG, JPG, WEBP up to 10MB)
             </div>
             <Button
               type="button"
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >
-              Select Files
+              Select File
             </Button>
             <input
               type="file"
-              multiple
               accept="image/png,image/jpeg,image/webp"
               className="hidden"
-              {...register("images", {
-                required: "At least one image is required",
+              {...register("image", {
+                required: "Product image is required",
               })}
               ref={fileInputRef}
-              onChange={(e) => setValue("images", e.target.files)}
+              onChange={(e) => setValue("image", e.target.files)}
             />
-            {watch("images") && (
-              <div className="mt-2 text-xs text-gray-600">
-                {Array.from(watch("images") as FileList).map((file) => (
-                  <div key={file.name}>{file.name}</div>
-                ))}
-              </div>
-            )}
+            {(() => {
+              const imageFiles = watch("image");
+              return (
+                imageFiles &&
+                imageFiles.length > 0 &&
+                imageFiles[0] && (
+                  <div className="mt-2 text-xs text-gray-600">
+                    {imageFiles[0].name}
+                  </div>
+                )
+              );
+            })()}
           </div>
-          {errors.images && (
+          {errors.image && (
             <span className="text-xs text-red-500">
-              {errors.images.message as string}
+              {errors.image.message as string}
             </span>
           )}
         </div>
@@ -178,7 +182,7 @@ export function ProductForm({
           <h2 className="font-semibold text-lg">Specifications</h2>
         </div>
 
-        <div className="flex items-center justify-betweeen gap-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex-1 mb-4">
             <Label>Brand</Label>
 

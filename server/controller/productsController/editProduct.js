@@ -5,9 +5,9 @@ async function editProduct(req, res) {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    // Handle images if new ones are uploaded
-    if (req.files && req.files.length > 0) {
-      updateData.images = req.files.map((file) => file.filename);
+    // Handle image if new one is uploaded (Cloudinary returns URL)
+    if (req.file) {
+      updateData.image = req.file.path; // Cloudinary returns URL in file.path
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, {

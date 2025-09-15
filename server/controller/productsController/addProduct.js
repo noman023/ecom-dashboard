@@ -13,16 +13,16 @@ async function addProduct(req, res) {
       quantity,
     } = req.body;
 
-    // Handle images (multer saves files in req.files)
-    let images = [];
-    if (req.files && req.files.length > 0) {
-      images = req.files.map((file) => file.filename);
+    // Handle image (Cloudinary returns URL in req.file)
+    let image = null;
+    if (req.file) {
+      image = req.file.path; // Cloudinary returns URL in file.path
     }
 
     const product = new Product({
       title,
       description,
-      images,
+      image,
       category,
       brand,
       color,

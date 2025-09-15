@@ -54,7 +54,7 @@ export default function Products() {
   const allData =
     data?.products?.map((item: any) => ({
       id: item._id,
-      image: item.images?.[0] || null,
+      image: item.image || null,
       name: item.title,
       sku: item.sku,
       price: `$${item.price}`,
@@ -97,7 +97,7 @@ export default function Products() {
       cell: (info) =>
         info.row.original.image ? (
           <img
-            src={`${baseURL}/uploads/${info.row.original.image}`}
+            src={`${info.row.original.image}`}
             alt={info.row.original.name}
             className="w-8 h-8 object-cover rounded"
           />

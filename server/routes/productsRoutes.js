@@ -14,7 +14,7 @@ const {
 } = require("../controller/productsController/getSingleProduct");
 
 const { authenticateUser } = require("../middleware/authMiddlware");
-const upload = require("../middleware/uploadMiddleware");
+const upload = require("../middleware/cloudinaryMiddleware");
 
 const router = require("express").Router();
 
@@ -22,8 +22,8 @@ router
   .get("/", getAllProducts)
   .get("/seller", authenticateUser, getSellerProducts)
   .get("/:id", getSingleProduct)
-  .post("/add", authenticateUser, upload.array("image"), addProduct)
-  .put("/edit/:id", authenticateUser, upload.array("image"), editProduct)
+  .post("/add", authenticateUser, upload.single("image"), addProduct)
+  .put("/edit/:id", authenticateUser, upload.single("image"), editProduct)
   .delete("/delete/:id", deleteProduct);
 
 module.exports = router;

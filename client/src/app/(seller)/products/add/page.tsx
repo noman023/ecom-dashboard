@@ -26,20 +26,18 @@ export default function AddProduct() {
       if (data.wholesalePrice)
         formData.append("wholesalePrice", data.wholesalePrice);
 
-      // Images (FileList)
+      // Image (FileList)
       const maxSize = 10 * 1024 * 1024;
       if (
-        data.images &&
-        Array.from(data.images).some((file) => file.size > maxSize)
+        data.image &&
+        Array.from(data.image).some((file) => file.size > maxSize)
       ) {
-        toast.error("Each image must be 10MB or less.");
+        toast.error("Image must be 10MB or less.");
         return;
       }
 
-      if (data.images && data.images.length > 0) {
-        Array.from(data.images).forEach((file) =>
-          formData.append("image", file)
-        );
+      if (data.image && data.image.length > 0) {
+        formData.append("image", data.image[0]);
       }
 
       await axiosInstance.post("/products/add", formData, {

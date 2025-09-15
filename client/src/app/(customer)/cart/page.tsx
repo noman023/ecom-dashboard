@@ -40,7 +40,7 @@ export default function CartPage() {
       variant: cartItem.product.model,
       price: cartItem.product.price,
       quantity: cartItem.quantity,
-      image: cartItem.product.images?.[0] || "",
+      image: cartItem.product.image || "",
     });
     return acc;
   }, {});

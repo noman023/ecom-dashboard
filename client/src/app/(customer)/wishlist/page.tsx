@@ -24,7 +24,7 @@ export default function Wishlist() {
       name: item.title,
       variant: item.model,
       price: item.price,
-      image: item.images?.[0] || "",
+      image: item.image || "",
     });
     return acc;
   }, {});

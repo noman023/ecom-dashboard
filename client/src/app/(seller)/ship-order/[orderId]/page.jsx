@@ -78,9 +78,9 @@ export default function ShipOrderPage() {
         {/* Product Row */}
         <div className="flex items-center gap-4 border-b pb-4 mb-4">
           <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-            {order.items[0]?.product?.images?.[0] ? (
+            {order.items[0]?.product?.image ? (
               <img
-                src={`${baseURL}/uploads/${order.items[0].product.images[0]}`}
+                src={`${order.items[0].product.image}`}
                 alt={order.items[0].product.title}
                 className="w-full h-full object-cover rounded"
               />
